@@ -3469,15 +3469,17 @@ export class Connection {
     const unsafeRes = await this._rpcRequest('sendTransaction', args);
     const res = create(unsafeRes, SendTransactionRpcResult);
     if ('error' in res) {
+      let logTrace = '';
+
       if ('data' in res.error) {
         const logs = res.error.data.logs;
         if (logs && Array.isArray(logs)) {
           const traceIndent = '\n    ';
-          const logTrace = traceIndent + logs.join(traceIndent);
+          logTrace = traceIndent + logs.join(traceIndent);
           console.error(res.error.message, logTrace);
         }
       }
-      throw new Error('failed to send transaction: ' + res.error.message);
+      throw new Error('failed to send transaction: ' + logTrace);
     }
     return res.result;
   }
